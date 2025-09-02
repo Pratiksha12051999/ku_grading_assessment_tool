@@ -7,7 +7,7 @@ This application is built using AWS CDK for infrastructure as code, AWS Lambda f
 
 ## Project Structure
 
-- `cdk/` - AWS CDK infrastructure code
+- `backend/` - AWS CDK infrastructure code
 - `frontend/` - Frontend application
 - `lambdas/` - AWS Lambda functions
 
@@ -131,7 +131,7 @@ Note: Ensure your AWS account/region supports Bedrock model access
 4. Deploy using deployment script:
    ```bash
    chmod +x deploy-ku-essay-grading.sh
-   ./deploy.sh
+   ./deploy-ku-essay-grading.sh
    ```
    
 ### Manual Deployment
