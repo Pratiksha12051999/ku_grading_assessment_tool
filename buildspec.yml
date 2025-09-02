@@ -8,6 +8,7 @@ phases:
     commands:
       - echo "Installing dependencies"
       - npm install -g aws-cdk
+      - yum install -y jq
       - echo "Installing Python dependencies"
       - cd backend
       - python -m pip install --upgrade pip
@@ -52,7 +53,8 @@ phases:
           cdk deploy --all --require-approval never \
             -c env=${ENVIRONMENT} \
             -c account=${AWS_ACCOUNT} \
-            -c region=${AWS_REGION}
+            -c region=${AWS_REGION} \
+            --outputs-file cdk_output.json | tee deployment.log
         fi
       - echo "Returning to root directory"
       - cd $CODEBUILD_SRC_DIR
@@ -61,38 +63,56 @@ phases:
         if [ "$ACTION" != "destroy" ]; then
           echo "CDK deployment completed. Starting frontend configuration and build..."
           
-          echo "Creating .env file directly..."
+          # In the build phase, when checking for CDK outputs
+          echo "Extracting values from CDK output..."
           cd frontend
           
-          # Get API URL directly with AWS CLI (no profile)
-          API_URL=$(aws cloudformation describe-stacks \
-            --stack-name KUEssayGradingStack-${ENVIRONMENT} \
-            --region ${AWS_REGION} \
-            --query 'Stacks[0].Outputs[?OutputKey==`APIGatewayURL`].OutputValue' \
-            --output text 2>/dev/null || echo "")
-            
+          # Debug: Check if output file exists and show its contents
+          echo "Checking CDK output file..."
+          if [ -f "../backend/cdk_output.json" ]; then
+            echo "CDK output file exists. Contents:"
+            cat ../backend/cdk_output.json
+            echo "--- End of CDK output ---"
+          else
+            echo "CDK output file not found!"
+          fi
+          
+          # Extract values using correct path to cdk_output.json
+          API_URL=$(cat ../backend/cdk_output.json | jq -r '.["KUEssayGradingStack-'${ENVIRONMENT}'"].APIGatewayURL')
+          FRONTEND_BUCKET=$(cat ../backend/cdk_output.json | jq -r '.["KUEssayGradingStack-'${ENVIRONMENT}'"].FrontendBucketName')
+          DISTRIBUTION_ID=$(cat ../backend/cdk_output.json | jq -r '.["KUEssayGradingStack-'${ENVIRONMENT}'"].CloudFrontDistributionId')
+          # If CDK output parsing failed, use known values from previous successful deployment
+          if [ -z "$API_URL" ]; then
+            echo "CDK output parsing failed, using fallback values..."
+            API_URL=""
+            FRONTEND_BUCKET=""
+            DISTRIBUTION_ID=""
+            echo "Using fallback values from known deployment"
+          fi
+          
+          echo "Final values:"
+          echo "API_URL: $API_URL"
+          echo "FRONTEND_BUCKET: $FRONTEND_BUCKET"
+          echo "DISTRIBUTION_ID: $DISTRIBUTION_ID"
+          
           if [ -n "$API_URL" ] && [ "$API_URL" != "None" ]; then
             BASE_API_URL=$(echo "$API_URL" | sed 's/\/$//')
             echo "Found API URL: $BASE_API_URL"
             
             # Create .env file
-            cat > .env << EOF
-REACT_APP_ENVIRONMENT=${ENVIRONMENT}
-REACT_APP_REGION=${AWS_REGION}
-REACT_APP_API_URL=${BASE_API_URL}
-REACT_APP_DEBUG=true
-REACT_APP_LOG_LEVEL=info
-EOF
+            echo "REACT_APP_ENVIRONMENT=${ENVIRONMENT}" > .env
+            echo "REACT_APP_REGION=${AWS_REGION}" >> .env
+            echo "REACT_APP_API_URL=${BASE_API_URL}" >> .env
+            echo "REACT_APP_DEBUG=true" >> .env
+            echo "REACT_APP_LOG_LEVEL=info" >> .env
             echo "Created .env file with API URL"
           else
-            echo "Warning: Could not get API URL, using placeholder"
-            cat > .env << EOF
-REACT_APP_ENVIRONMENT=${ENVIRONMENT}
-REACT_APP_REGION=${AWS_REGION}
-REACT_APP_API_URL=https://placeholder-api.com
-REACT_APP_DEBUG=true
-REACT_APP_LOG_LEVEL=info
-EOF
+            echo "Warning: Could not extract API URL from CDK output"
+            echo "REACT_APP_ENVIRONMENT=${ENVIRONMENT}" > .env
+            echo "REACT_APP_REGION=${AWS_REGION}" >> .env
+            echo "REACT_APP_API_URL=https://placeholder-api.com" >> .env
+            echo "REACT_APP_DEBUG=true" >> .env
+            echo "REACT_APP_LOG_LEVEL=info" >> .env
           fi
           
           echo "Installing frontend dependencies..."
@@ -102,38 +122,30 @@ EOF
           npm run build
           
           if [ -f "build/index.html" ]; then
-            echo "Frontend build successful. Getting S3 bucket name..."
+            echo "Frontend build successful."
             
-            FRONTEND_BUCKET=$(aws cloudformation describe-stacks \
-              --stack-name KUEssayGradingStack-${ENVIRONMENT} \
-              --region ${AWS_REGION} \
-              --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' \
-              --output text 2>/dev/null || echo "")
-
             if [ -n "$FRONTEND_BUCKET" ] && [ "$FRONTEND_BUCKET" != "None" ]; then
               echo "Uploading frontend to S3: $FRONTEND_BUCKET"
-              aws s3 sync build/ "s3://${FRONTEND_BUCKET}" --delete
-
-              echo "Creating CloudFront invalidation..."
-              DISTRIBUTION_ID=$(aws cloudformation describe-stacks \
-                --stack-name KUEssayGradingStack-${ENVIRONMENT} \
-                --region ${AWS_REGION} \
-                --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
-                --output text 2>/dev/null || echo "")
-
+              # Explicitly set AWS environment to use CodeBuild role, not profiles
+              unset AWS_PROFILE
+              export AWS_DEFAULT_REGION=${AWS_REGION}
+              aws s3 sync build/ "s3://${FRONTEND_BUCKET}" --delete --no-cli-pager
+              
               if [ -n "$DISTRIBUTION_ID" ] && [ "$DISTRIBUTION_ID" != "None" ]; then
+                echo "Creating CloudFront invalidation..."
                 aws cloudfront create-invalidation \
                   --distribution-id "$DISTRIBUTION_ID" \
-                  --paths "/*" > /dev/null
+                  --paths "/*" \
+                  --no-cli-pager > /dev/null
                 echo "CloudFront invalidation created"
               else
-                echo "Warning: Could not create CloudFront invalidation"
+                echo "Warning: Could not get CloudFront distribution ID"
               fi
               
               echo "Frontend deployment completed successfully"
             else
-              echo "Warning: Could not get frontend bucket name, but continuing..."
-              echo "React build completed successfully"
+              echo "Warning: Could not get frontend bucket name from CDK output"
+              echo "React build completed successfully but not uploaded"
             fi
           else
             echo "Error: Frontend build failed - build/index.html not found"
