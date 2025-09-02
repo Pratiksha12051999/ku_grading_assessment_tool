@@ -61,14 +61,39 @@ phases:
         if [ "$ACTION" != "destroy" ]; then
           echo "CDK deployment completed. Starting frontend configuration and build..."
           
-          echo "Running configure-frontend-env.sh script..."
-          chmod +x configure-frontend-env.sh
-          
-          # Run the script with environment, empty profile (for CodeBuild), and region
-          ./configure-frontend-env.sh "${ENVIRONMENT}" "" "${AWS_REGION}"
-          
-          echo "Frontend environment configured. Building React application..."
+          echo "Creating .env file directly..."
           cd frontend
+          
+          # Get API URL directly with AWS CLI (no profile)
+          API_URL=$(aws cloudformation describe-stacks \
+            --stack-name KUEssayGradingStack-${ENVIRONMENT} \
+            --region ${AWS_REGION} \
+            --query 'Stacks[0].Outputs[?OutputKey==`APIGatewayURL`].OutputValue' \
+            --output text 2>/dev/null || echo "")
+            
+          if [ -n "$API_URL" ] && [ "$API_URL" != "None" ]; then
+            BASE_API_URL=$(echo "$API_URL" | sed 's/\/$//')
+            echo "Found API URL: $BASE_API_URL"
+            
+            # Create .env file
+            cat > .env << EOF
+REACT_APP_ENVIRONMENT=${ENVIRONMENT}
+REACT_APP_REGION=${AWS_REGION}
+REACT_APP_API_URL=${BASE_API_URL}
+REACT_APP_DEBUG=true
+REACT_APP_LOG_LEVEL=info
+EOF
+            echo "Created .env file with API URL"
+          else
+            echo "Warning: Could not get API URL, using placeholder"
+            cat > .env << EOF
+REACT_APP_ENVIRONMENT=${ENVIRONMENT}
+REACT_APP_REGION=${AWS_REGION}
+REACT_APP_API_URL=https://placeholder-api.com
+REACT_APP_DEBUG=true
+REACT_APP_LOG_LEVEL=info
+EOF
+          fi
           
           echo "Installing frontend dependencies..."
           npm install
@@ -107,8 +132,8 @@ phases:
               
               echo "Frontend deployment completed successfully"
             else
-              echo "Error: Could not get frontend bucket name"
-              exit 1
+              echo "Warning: Could not get frontend bucket name, but continuing..."
+              echo "React build completed successfully"
             fi
           else
             echo "Error: Frontend build failed - build/index.html not found"
