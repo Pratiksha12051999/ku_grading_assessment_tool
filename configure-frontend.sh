@@ -7,7 +7,7 @@ set -e
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"  # Assuming script is in scripts/ directory
-FRONTEND_DIR="$PROJECT_ROOT/ku_grader_tool/frontend"
+FRONTEND_DIR="$PROJECT_ROOT/ku_grading_tool/frontend"
 ENV_FILE="$FRONTEND_DIR/.env"
 
 # Default values (can be overridden with command line args)
