@@ -174,7 +174,7 @@ Run the configuration script to update the .env file for deploying the frontend.
 
 ## Usage
 
-1. Download Required Sample Files and update them in the input JSON
+1. Download Required Sample Files and upload them in kudocuments S3 bucket
 
 original_rubric_guidelines_s3_file : https://drive.google.com/file/d/1E3-tJzc26ZZdYGb6J0ie4qDWUDDivY3U/view?usp=drive_link
 sample_essays_csv_s3_file : https://drive.google.com/file/d/1hyPNc6EKhJfiQ6jV11hwq6a2nsik3jBT/view?usp=drive_link
