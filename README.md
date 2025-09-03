@@ -105,7 +105,25 @@ Note: Ensure your AWS account/region supports Bedrock model access
    - Ensure you receive a successful response 
 
 
-### Using AWS CodeBuild with Local Terminal
+## Deployment
+
+### Using Cloudshell and AWS CodeBuild (Easiest)
+
+1. Go to Cloudshell on AWS Console
+2. Clone your forked repository:
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/ku_grading_tool
+   cd ku_grading_tool
+   ```
+3. Unset AWS Profile
+   ```bash
+   unset AWS_PROFILE
+   ```
+4. Deploy using deployment script:
+   ```bash
+   chmod +x deploy-ku-essay-grading.sh
+   ./deploy-ku-essay-grading.sh
+   ```
 
 ### Using Local Terminal for Deployment
 
