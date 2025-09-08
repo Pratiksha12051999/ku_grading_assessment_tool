@@ -22,11 +22,18 @@ phases:
       - echo "AWS_ACCOUNT:$AWS_ACCOUNT"
       - echo "AWS_REGION:$AWS_REGION"
       - echo "ENVIRONMENT:$ENVIRONMENT"
+      - echo "ACTION:$ACTION"  # Added this critical debug line
       - echo "Current directory:" && pwd
       - echo "Contents:" && ls -la
       - cd backend
       - echo "Now in backend directory for CDK bootstrap"
-      - cdk bootstrap --require-approval never --context account=${AWS_ACCOUNT} --context region=${AWS_REGION} || true
+      - |
+        if [ "$ACTION" != "destroy" ]; then
+          echo "Bootstrapping CDK (skipped for destroy operations)..."
+          cdk bootstrap --require-approval never --context account=${AWS_ACCOUNT} --context region=${AWS_REGION} || true
+        else
+          echo "Skipping CDK bootstrap for destroy operation"
+        fi
       - cd $CODEBUILD_SRC_DIR
 
   build:
@@ -37,12 +44,54 @@ phases:
       - echo "Now in backend directory:" && pwd
       - |
         if [ "$ACTION" = "destroy" ]; then
-          echo "Destroying CDK stacks..."
+          echo "=========================================="
+          echo "STARTING DESTRUCTION PROCESS"
+          echo "=========================================="
+          
+          # First, try to empty S3 buckets that might prevent stack deletion
+          echo "Step 1: Identifying and emptying S3 buckets..."
+          STACK_NAME="KUEssayGradingStack-${ENVIRONMENT}"
+          
+          # Get S3 buckets from the stack
+          BUCKETS=$(aws cloudformation describe-stack-resources \
+            --stack-name "$STACK_NAME" \
+            --region "$AWS_REGION" \
+            --query 'StackResources[?ResourceType==`AWS::S3::Bucket`].PhysicalResourceId' \
+            --output text 2>/dev/null || echo "")
+          
+          if [ -n "$BUCKETS" ] && [ "$BUCKETS" != "None" ]; then
+            for bucket in $BUCKETS; do
+              echo "Emptying S3 bucket: $bucket"
+              aws s3 rm "s3://$bucket" --recursive 2>/dev/null || echo "Could not empty bucket $bucket (may not exist or already empty)"
+            done
+          else
+            echo "No S3 buckets found in stack or stack doesn't exist"
+          fi
+          
+          echo "Step 2: Destroying CDK stacks..."
           cdk destroy --all --force \
             -c env=${ENVIRONMENT} \
             -c account=${AWS_ACCOUNT} \
-            -c region=${AWS_REGION}
+            -c region=${AWS_REGION} || {
+            echo "CDK destroy failed, checking stack status..."
+            aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$AWS_REGION" || echo "Stack may already be deleted"
+            exit 1
+          }
+          
+          echo "Step 3: Verifying stack deletion..."
+          sleep 10
+          if aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$AWS_REGION" >/dev/null 2>&1; then
+            echo "Warning: Stack still exists, checking status..."
+            aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$AWS_REGION" --query 'Stacks[0].StackStatus' --output text
+          else
+            echo "Stack successfully deleted"
+          fi
+          
         else
+          echo "=========================================="
+          echo "STARTING DEPLOYMENT PROCESS"
+          echo "=========================================="
+          
           echo "Synthesizing CDK stack..."
           cdk synth \
             -c env=${ENVIRONMENT} \
@@ -157,7 +206,34 @@ phases:
     commands:
       - echo "Post-build phase started"
       - |
-        if [ "$ACTION" != "destroy" ]; then
+        if [ "$ACTION" = "destroy" ]; then
+          echo "=========================================="
+          echo "DESTRUCTION COMPLETED"
+          echo "=========================================="
+          
+          STACK_NAME="KUEssayGradingStack-${ENVIRONMENT}"
+          
+          # Verify the stack is actually deleted
+          if aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$AWS_REGION" >/dev/null 2>&1; then
+            echo "⚠️  WARNING: Stack still exists!"
+            echo "Stack Status:"
+            aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$AWS_REGION" --query 'Stacks[0].StackStatus' --output text
+            echo ""
+            echo "This might be normal if deletion is still in progress."
+            echo "Check the CloudFormation console for detailed status."
+          else
+            echo "✅ SUCCESS: All KU Essay Grading resources have been destroyed"
+            echo ""
+            echo "The following resources have been removed:"
+            echo "  - Lambda functions"
+            echo "  - API Gateway"
+            echo "  - S3 buckets"
+            echo "  - CloudFront distribution"
+            echo "  - IAM roles and policies"
+            echo "  - CloudWatch log groups"
+          fi
+          
+        else
           echo "Getting deployment summary..."
           
           STACK_NAME="KUEssayGradingStack-${ENVIRONMENT}"
@@ -183,7 +259,7 @@ phases:
           echo "Generate Rubric Endpoint: ${API_URL}generate-rubric"
           echo "=========================================="
         fi
-      - echo "CDK $ACTION complete."
+      - echo "CDK $ACTION operation complete."
 
 artifacts:
   files:
