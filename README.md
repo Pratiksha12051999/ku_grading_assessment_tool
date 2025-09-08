@@ -169,26 +169,40 @@ Note: Ensure your AWS account/region supports Bedrock model access
    ```bash
    git clone https://github.com/YOUR-USERNAME/ku_grading_tool
    cd ku_grading_tool
-   ```
    
-2. Deploy backend infrastructure:
-   ```bash
+   
    cd backend
-   cdk deploy --profile <AWS_PROFILE> -c env=dev -c account=<AWS_ACCOUNT_ID> -c region=us-east-1 -c profile=<AWS_PROFILE> --all
-    ```
 
-2. Deploy frontend:
+   # Step 1: Create and activate virtual environment
+   python3 -m venv ku-env
+   source ku-env/bin/activate
 
-Run the configuration script to update the .env file for deploying the frontend.
-   ```bash
-   cd ..
-   chmod +x configure-frontend.sh
-   ./configure-frontend.sh
-   
-   cd frontend
-   npm install
-   npm run build
+   # Step 2: Install dependencies
+   python -m pip install --upgrade pip
+   pip install aws-cdk-lib
+   pip install -r requirements.txt
+
+   # Step 3: Install CDK CLI (if needed)
+   npm install -g aws-cdk
+
+   # Step 4: Bootstrap (one-time per account/region)
+   cdk bootstrap --context account=<AWS_ACCOUNT_ID> --context region=us-east-1 --profile <AWS_PROFILE>
+
+   # Step 5: Deploy
+   cdk deploy --profile <AWS_PROFILE> -c env=dev -c account=<AWS_ACCOUNT_ID> -c region=us-east-1 -c profile=<AWS_PROFILE> --allcd backend
    ```
+
+   Run the configuration script to update the .env file for deploying the frontend.
+     
+      ```bash
+      cd ..
+      chmod +x configure-frontend.sh
+      ./configure-frontend.sh
+      
+      cd frontend
+      npm install
+      npm run build
+      ```
 
 ## Usage
 

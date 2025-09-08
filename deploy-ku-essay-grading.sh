@@ -38,7 +38,7 @@ fi
 # AWS Configuration
 if [ -z "${AWS_PROFILE:-}" ]; then
     read -rp "Enter AWS profile name [default]: " AWS_PROFILE
-    AWS_PROFILE=${AWS_PROFILE:-default}
+    AWS_PROFILE=${AWS_PROFILE}
 fi
 
 if [ -z "${ENVIRONMENT:-}" ]; then
