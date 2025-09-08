@@ -217,22 +217,23 @@ Note: Ensure your AWS account/region supports Bedrock model access
          Note : This file contains sample essay responses and essay scores for Essay Set 8 (Narrative Essay)
 
 2.Use this JSON body to call the Generate Rubric endpoint: Replace the S3 URLs with the ones you uploaded in step 1.
-```json
-{
-  "input_type": "direct",
-  "content_id": "1",
-  "essay_type": "Narrative",
-  "grade_level": "10",
-  "source_text_title": "",
-  "author": "",
-  "essay_prompt": "We all understand the benefits of laughter. For example, someone once said, “Laughter is the shortest distance between two people.” Many other people believe that laughter is an important part of any relationship. Tell a true story in which laughter was one element or part.",
-  "score_range": "1-6",
-  "source_text_content": "",
-  "original_rubric_guidelines_s3_url": "s3://kuessaygradingstack-dev-kudocumentsbucketfaec8400-nsot9pq5xre3/EssaySet8_ReadMeFirst.pdf",
-  "sample_essays_csv_s3_url": "s3://kuessaygradingstack-dev-kudocumentsbucketfaec8400-nsot9pq5xre3/dataset_8.csv"
-}
-```
+   ```json
+   {
+     "input_type": "direct",
+     "content_id": "1",
+     "essay_type": "Narrative",
+     "grade_level": "10",
+     "source_text_title": "",
+     "author": "",
+     "essay_prompt": "We all understand the benefits of laughter. For example, someone once said, “Laughter is the shortest distance between two people.” Many other people believe that laughter is an important part of any relationship. Tell a true story in which laughter was one element or part.",
+     "score_range": "1-6",
+     "source_text_content": "",
+     "original_rubric_guidelines_s3_url": "s3://kuessaygradingstack-dev-kudocumentsbucketfaec8400-nsot9pq5xre3/EssaySet8_ReadMeFirst.pdf",
+     "sample_essays_csv_s3_url": "s3://kuessaygradingstack-dev-kudocumentsbucketfaec8400-nsot9pq5xre3/dataset_8.csv"
+   }
+   ```
 3. Hit the Generate Rubric Endpoint from postman and ensure you get a 200 response.
 
-4. Now Upload this sample json file to the frontend application to grade essays.
-Sample JSON file : https://drive.google.com/file/d/1sLRZEm_6zgWSqbZh108xse4de9E8p0VR/view?usp=drive_link
+4. Now Upload this sample json file to the frontend application to grade essays. 
+
+   Sample JSON file : https://drive.google.com/file/d/1sLRZEm_6zgWSqbZh108xse4de9E8p0VR/view?usp=drive_link
