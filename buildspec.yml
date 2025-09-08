@@ -22,7 +22,7 @@ phases:
       - echo "AWS_ACCOUNT:$AWS_ACCOUNT"
       - echo "AWS_REGION:$AWS_REGION"
       - echo "ENVIRONMENT:$ENVIRONMENT"
-      - echo "ACTION:$ACTION"  # Added this critical debug line
+      - echo "ACTION:$ACTION"
       - echo "Current directory:" && pwd
       - echo "Contents:" && ls -la
       - cd backend
