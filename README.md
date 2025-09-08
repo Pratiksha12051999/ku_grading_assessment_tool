@@ -169,8 +169,6 @@ Note: Ensure your AWS account/region supports Bedrock model access
    ```bash
    git clone https://github.com/YOUR-USERNAME/ku_grading_tool
    cd ku_grading_tool
-   
-   
    cd backend
 
    # Step 1: Create and activate virtual environment
@@ -206,10 +204,17 @@ Note: Ensure your AWS account/region supports Bedrock model access
 
 ## Usage
 
-1. Download Required Sample Files and upload them in kudocuments S3 bucket
+1. Download Required Sample Files and upload them in kudocuments S3 bucket. We are generating rubric for Essay Set 8 (Narrative Essay).
+   2. Upload the following files to the S3 bucket created by CDK stack. You can find the bucket name in the CloudFormation outputs in AWS Console.
 
-original_rubric_guidelines_s3_file : https://drive.google.com/file/d/1E3-tJzc26ZZdYGb6J0ie4qDWUDDivY3U/view?usp=drive_link
-sample_essays_csv_s3_file : https://drive.google.com/file/d/1hyPNc6EKhJfiQ6jV11hwq6a2nsik3jBT/view?usp=drive_link
+      You can use the following links to download the files:
+      1. original_rubric_guidelines_s3_file : https://drive.google.com/file/d/1E3-tJzc26ZZdYGb6J0ie4qDWUDDivY3U/view?usp=drive_link
+         
+         Note : This file contains the rubric generation guidelines for Essay Set 8 (Narrative Essay)
+   
+      2. sample_essays_csv_s3_file : https://drive.google.com/file/d/1hyPNc6EKhJfiQ6jV11hwq6a2nsik3jBT/view?usp=drive_link
+      
+         Note : This file contains sample essay responses and essay scores for Essay Set 8 (Narrative Essay)
 
 2.Use this JSON body to call the Generate Rubric endpoint: Replace the S3 URLs with the ones you uploaded in step 1.
 ```json
