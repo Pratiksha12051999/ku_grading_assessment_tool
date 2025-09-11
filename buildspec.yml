@@ -27,20 +27,37 @@ phases:
       - echo "Contents:" && ls -la
       - cd backend
       - echo "Now in backend directory for CDK bootstrap"
+      - echo "Contents of backend directory:"
+      - ls -la
+      - echo "Checking for lambdas directory:"
+      - ls -la lambdas/ || echo "lambdas directory does not exist"
+      - echo "Checking for layers directory:"
+      - ls -la lambdas/layers/ || echo "lambdas/layers directory does not exist"
+      - echo "Full directory tree:"
+      - find . -name "rubric_gen_layer" -type d || echo "rubric_gen_layer directory not found"
+
+      - echo "Setting up Lambda layers before CDK operations..."
       - |
-        if [ "$ACTION" != "destroy" ]; then
-          echo "Bootstrapping CDK (skipped for destroy operations)..."
-          cdk bootstrap --require-approval never --context account=${AWS_ACCOUNT} --context region=${AWS_REGION} || true
+        if [ -d "lambdas/layers/rubric_gen_layer" ]; then
+          echo "Found rubric_gen_layer directory, setting up..."
+          cd lambdas/layers/rubric_gen_layer
+          pip install -r ../../rubric_generation/requirements.txt -t python/
+          cd ../../../
+          echo "Lambda layers setup completed"
         else
-          echo "Skipping CDK bootstrap for destroy operation"
+          echo "ERROR: rubric_gen_layer directory not found!"
+          echo "Creating directory structure..."
+          mkdir -p lambdas/layers/rubric_gen_layer/python
+          cd lambdas/layers/rubric_gen_layer
+          pip install -r ../../rubric_generation/requirements.txt -t python/
+          cd ../../../
+          echo "Lambda layers setup completed with created directories"
         fi
-      - cd $CODEBUILD_SRC_DIR
 
   build:
     commands:
       - echo "Build phase started"
       - echo "Current directory:" && pwd
-      - cd backend
       - echo "Now in backend directory:" && pwd
       - |
         if [ "$ACTION" = "destroy" ]; then
@@ -97,11 +114,6 @@ phases:
             -c env=${ENVIRONMENT} \
             -c account=${AWS_ACCOUNT} \
             -c region=${AWS_REGION}
-        
-          echo "Setting up Lambda layers..."
-          cd lambdas/layers/rubric_gen_layer
-          pip install -r ../../rubric_generation/requirements.txt -t python/
-          cd ../../../
 
           echo "Deploying CDK stack..."
           cdk deploy --all --require-approval never \
