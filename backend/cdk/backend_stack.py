@@ -369,13 +369,22 @@ class KUEssayGradingStack(Stack):
     def create_lambda_functions(self):
         """Create Lambda functions"""
 
+        rubric_layer = lambda_.LayerVersion(
+        self, "RubricLayer",
+        layer_version_name="rubric_generation_dependencies",
+        compatible_runtimes=[lambda_.Runtime.PYTHON_3_11],
+        code=lambda_.Code.from_asset("./lambdas/layers/rubric_gen_layer"),
+        description="Layer for PDF processing dependencies"
+        )
+
         # Rubric Generation Lambda
         self.rubric_generation_lambda = lambda_.Function(
             self, "KURubricGenerationLambda",
             function_name="ku_rubric_generation_lambda",
             runtime=lambda_.Runtime.PYTHON_3_11,
             handler="lambda_function.lambda_handler",
-            code=lambda_.Code.from_asset("./lambdas/rubric_generation"),  # Fixed path
+            code=lambda_.Code.from_asset("./lambdas/rubric_generation"),
+            layers=[rubric_layer],
             timeout=Duration.seconds(self.config["timeout"]["ku_rubric_generation_lambda"]),
             memory_size=self.config["memory_size"]["ku_rubric_generation_lambda"],
             role=self.rubric_lambda_role,

@@ -97,6 +97,11 @@ phases:
             -c env=${ENVIRONMENT} \
             -c account=${AWS_ACCOUNT} \
             -c region=${AWS_REGION}
+        
+          echo "Setting up Lambda layers..."
+          cd lambdas/layers/rubric_gen_layer
+          pip install -r ../../rubric_generation/requirements.txt -t python/
+          cd ../../../../backend/
 
           echo "Deploying CDK stack..."
           cdk deploy --all --require-approval never \
