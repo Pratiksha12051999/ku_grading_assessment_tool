@@ -101,7 +101,7 @@ phases:
           echo "Setting up Lambda layers..."
           cd lambdas/layers/rubric_gen_layer
           pip install -r ../../rubric_generation/requirements.txt -t python/
-          cd ../../../../backend/
+          cd ../../../
 
           echo "Deploying CDK stack..."
           cdk deploy --all --require-approval never \
