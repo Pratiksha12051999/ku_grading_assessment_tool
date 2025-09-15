@@ -57,7 +57,7 @@ This application is built using AWS CDK for infrastructure as code, AWS Lambda f
 ```
 ## Architecture
 
-![Architecture Diagram](./docs/architecture.png)
+![Architecture Diagram](./docs/Architecture.png)
 
 ## Common Prerequisites for Deployment
 
