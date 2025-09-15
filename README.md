@@ -52,8 +52,7 @@ This application is built using AWS CDK for infrastructure as code, AWS Lambda f
     ├── public/          # Static assets
     ├── src/             # Source code
     │   ├── components/  # React components
-    │   ├── services/    # API services
-    │   └── utils/       # Utility functions
+    │   └── pages/       # React pages
     └── package.json     # Node.js dependencies
 ```
 ## Architecture
