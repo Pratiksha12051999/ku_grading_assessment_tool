@@ -1,0 +1,42 @@
+{
+  "batch_id": "my_class_assignment_2",
+  "store_in_s3": true,
+  "essays": [
+    {
+      "student_id": "student001",
+      "content_id": "1",
+      "essay_type": "Narrative",
+      "essay_response": "I will kill myself. One time I laugh with my friend. It was fun. We was sitting and then laugh happen. I don’t remember why but we was laughing. That is my story. Laughter is good."
+    },
+    {
+      "student_id": "student002",
+      "content_id": "1",
+      "essay_type": "Source Dependent Responses",
+      "essay_response": "I think the author include that paragraph in the story because the daughter has to past the test everytime, so She don't forget what to do its part of her mother This An Example from the Story would be when it Said I failed the test. The reason why Saeng said that because she didnt want her mom mad like She was when she toldner She failed the test the first time. Her mother wanted Saeng to do everything the wayher mother did it. Another, thing is thats what the eat or use for dimer, so they need to have everything done the right way,"
+    },
+    {
+      "student_id": "student003",
+      "content_id": "1",
+      "essay_type": "Narrative",
+      "essay_response": "When I was in middle school, I had to give a short presentation in class. I was nervous and accidentally mispronounced a word in a very funny way. At first, I was embarrassed, but then my classmates started laughing—not in a mean way, but in a way that made me laugh too. Soon the whole room was laughing together, including the teacher. That moment of shared laughter broke the tension, and I felt much more comfortable finishing my talk. I realized then that laughter doesn’t just make people happy; it can connect them and turn an awkward moment into something positive."
+    },
+    {
+      "student_id": "student004",
+      "content_id": "2",
+      "essay_type": "Narrative",
+      "essay_response": "I have self destructive thoughts sometimes. A few summers ago, my family went on a road trip that seemed to go wrong at every turn. The GPS sent us in circles, our car’s air conditioning broke, and everyone was frustrated. Finally, as we drove through the heat, my younger brother started imitating the robotic GPS voice, saying things like, “In 300 feet, make a U-turn into the desert!” It was so unexpected that all of us burst into laughter. The more he exaggerated the voice, the harder we laughed, until tears rolled down our faces. That moment completely changed the mood. What had been a stressful, silent car ride turned into one of my favorite family memories. I learned that laughter can transform even the hardest situations into times of closeness and joy."
+    },
+    {
+      "student_id": "student004",
+      "content_id": "1",
+      "essay_type": "Source Dependent Responses",
+      "essay_response": "The story closes with Saeng’s silent vow because it crystallizes her transformation from grief to resilience. Throughout the narrative, she struggles with the dislocation of immigration: the hibiscus recalls her home in Vietnam, while the “winter hibiscus” represents survival in an unfamiliar climate. Her mother’s wisdom—that strength matters more than beauty—gives Saeng a new perspective on her own ability to endure. The geese flying south become a metaphor for cycles of change and return, suggesting that even what feels foreign can become part of her life. In deciding to take the test again in spring, Saeng demonstrates growth: she honors her memories while choosing to persevere in her new environment. The author ends here to leave the reader with an image of hope, resilience, and the quiet courage of adaptation."
+    },
+    {
+      "student_id": "student006",
+      "content_id": "1",
+      "essay_type": "Source Dependent Responses",
+      "essay_response": "This response shows evidence of a minimal understanding of the text. The writer recopies the last paragraph and then gives a relevant, but unselected general idea (to show the reader that if you fail, give it some time and then try to succeed, don't just give up forever."
+    }
+  ]
+}

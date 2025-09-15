@@ -1,21 +1,44 @@
-# KU Grading Tool
+# Kansas University Grading Tool
 
 Kansas University (KU) uses the KITE platform for standardized testing and seeks to enhance written-response assessment with AI. Manual essay grading is slow, costly, and can vary across evaluators. This proof-of-concept (POC) delivers an automated, rubric-aware scoring solution that maintains accuracy while improving speed and scalability.
 The KU Grading tool is an automated essay scoring solution designed to enhance the assessment process. This project leverages AWS Bedrock to provide consistent, efficient, and scalable grading aligned with educational standards.
 
 This application is built using AWS CDK for infrastructure as code, AWS Lambda for serverless compute, API Gateway for RESTful endpoints, and a React frontend for user interaction. The backend integrates with an AWS bedrock via API to perform essay grading based on predefined rubrics. It reduces  grading time and resource usage by automating the evaluation process while ensuring alignment with educational standards.
 
+## 📖 Table of Contents
+
+| Section                                       | Description                                                        |
+|-----------------------------------------------|--------------------------------------------------------------------|
+| [Project Structure](#project-structure)       | Detailed breakdown of files and directories                        |
+| [Repository Structure](#repository-structure) | Core functionality, technical capabilities, and analytics          |
+| [Architecture](#architecture)                 | Technology stack, system components, and infrastructure            |
+| [Prerequisites](#prerequisites)               | AWS requirements, development environment, and tools               |
+| [Deployment Options](#deployment)             | Automated and manual deployment methods                            |
+| [Usage Guide](#usage-guide)                   | Step-by-step guide for setup, rubric generation, and essay grading |
+| [API Documentation](#api-documentation)       | Endpoints, authentication, and rate limits                         |
+| [Modification Guide](#modification-guide)     | Endpoints, authentication, and rate limits                         |
+| [Credits](#credits)                           | Credits to contributors of the project                             |
+| [License](#license)                           | MIT License for project distribution                               |
+
+---
+
 ## Project Structure
 
 - `backend/` - AWS CDK infrastructure code
 - `frontend/` - Frontend application
-- `lambdas/` - AWS Lambda functions
+- `/backend/lambdas/` - AWS Lambda functions
+- `docs/` - Documentation and architecture diagrams
+- `buildspec.yml` - AWS CodeBuild configuration file
 
 ## Repository Structure
 
 ```
 .
 ├── buildspec.yml           # AWS CodeBuild configuration
+├── deploy-ku-essay-grading.sh   # AWS CodeBuild script for deployment
+├── configure-frontend.sh   # Script to configure frontend with backend details
+├── docs/                   # Documentation and architecture diagrams
+│   └── architecture.png    # Architecture diagram
 ├── backend/               # Backend infrastructure code
 │   ├── app.py            # CDK app entry point
 │   ├── cdk/              # CDK stack definitions
@@ -33,11 +56,11 @@ This application is built using AWS CDK for infrastructure as code, AWS Lambda f
     │   └── utils/       # Utility functions
     └── package.json     # Node.js dependencies
 ```
+## Architecture
 
+![Architecture Diagram](./docs/architecture.png)
 
-## Deployment
-
-## Common Prerequisites
+## Common Prerequisites for Deployment
 
 ### GitHub Setup
 1. Fork this repository to your GitHub account:
@@ -125,7 +148,7 @@ Note: Ensure your AWS account/region supports Bedrock model access
    ./deploy-ku-essay-grading.sh
    ```
 
-### Using Local Terminal for Deployment
+### Using Local Terminal with AWS Codebuild for Deployment
 
 #### Prerequisites
 1. Create IAM User with Administrative Access:
@@ -202,7 +225,7 @@ Note: Ensure your AWS account/region supports Bedrock model access
       npm run build
       ```
 
-## Usage
+## Usage Guide
 
 1. Download Required Sample Files and upload them in kudocuments S3 bucket. We are generating rubric for Essay Set 8 (Narrative Essay).
    2. Upload the following files to the S3 bucket created by CDK stack. You can find the bucket name in the CloudFormation outputs in AWS Console.
@@ -210,11 +233,11 @@ Note: Ensure your AWS account/region supports Bedrock model access
       You can use the following links to download the files:
       1. original_rubric_guidelines_s3_file : https://drive.google.com/file/d/1E3-tJzc26ZZdYGb6J0ie4qDWUDDivY3U/view?usp=drive_link
          
-         Note : This file contains the rubric generation guidelines for Essay Set 8 (Narrative Essay)
+         Note : This document must have rubric generation guidelines for the essay_type you are generating the rubric for. Check sample file for reference.
    
       2. sample_essays_csv_s3_file : https://drive.google.com/file/d/1hyPNc6EKhJfiQ6jV11hwq6a2nsik3jBT/view?usp=drive_link
       
-         Note : This file contains sample essay responses and essay scores for Essay Set 8 (Narrative Essay)
+         Note : This file contains sample essay responses and essay scores for the essay type you are trying to grade. A bigger sample of examples would mean better context for the LLM to generate the rubric based on these sample essays. Check sample file for reference.
 
 2.Use this JSON body to call the Generate Rubric endpoint: Replace the S3 URLs with the ones you uploaded in step 1.
    ```json
@@ -237,3 +260,17 @@ Note: Ensure your AWS account/region supports Bedrock model access
 4. Now Upload this sample json file to the frontend application to grade essays. 
 
    Sample JSON file : https://drive.google.com/file/d/1sLRZEm_6zgWSqbZh108xse4de9E8p0VR/view?usp=drive_link
+
+## API Documentation
+
+Here you can learn about the API the project uses: [API Documentation](/docs/api_doc.md).
+
+## Modification Guide
+
+
+
+## Credits
+This application was architected and developed by [Pratiksha Wadibhasme](https://www.linkedin.com/in/pratikshawadibhasme/), [Syna Malhan](https://www.linkedin.com/in/synamalhan/), and [Ashik Mathew Tharakan](https://www.linkedin.com/in/ashik-tharakan/), with solutions architect [Arun Arunachalam](https://www.linkedin.com/in/arunarunachalam/), program manager [Thomas Orr](https://www.linkedin.com/in/thomas-orr/) and product manager [Rachel Hayden](https://www.linkedin.com/in/rachelhayden/). Thanks to the ASU Cloud Innovation Centre Technical and Project Management teams for their guidance and support.
+
+## License
+This project is distributed under the [MIT License](LICENSE).
