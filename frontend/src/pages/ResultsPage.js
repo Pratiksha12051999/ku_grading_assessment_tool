@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ResultsPage.css';
-import EditScoreModal from './EditScoreModal';
-import Header from './Header';
+import EditScoreModal from '../components/EditScoreModal';
+import Header from '../components/Header';
 
 function ResultsPage({ results, originalEssayData, onBack }) {
   const [currentStudent, setCurrentStudent] = useState(0);

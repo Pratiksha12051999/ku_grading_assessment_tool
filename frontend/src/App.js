@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import UploadPage from './UploadPage';
-import GradingPage from './GradingPage';
-import ResultsPage from './ResultsPage';
+import UploadPage from './pages/UploadPage';
+import GradingPage from './pages/GradingPage';
+import ResultsPage from './pages/ResultsPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('upload');
