@@ -20,7 +20,7 @@ dynamodb = boto3.resource('dynamodb')
 s3_client = boto3.client('s3')
 
 # Configuration
-RUBRICS_TABLE = 'ku_grading_rubrics'
+RUBRICS_TABLE = os.environ.get('RUBRICS_TABLE')
 S3_BUCKET = os.environ.get('OUTPUT_BUCKET_NAME')
 rubrics_table = dynamodb.Table(RUBRICS_TABLE)
 
@@ -487,16 +487,6 @@ def get_rubric_for_essay_type(essay_type: str, content_id: Optional[str] = None)
 
             if not response['Items']:
                 logger.warning(f"No rubric found for essay type: {essay_type} and content_id: {content_id}")
-                # logger.info(f"Falling back to most recent rubric for essay type: {essay_type}")
-                #
-                # # Fallback to most recent rubric for this essay_type
-                # response = rubrics_table.query(
-                #     KeyConditionExpression=Key('essay_type').eq(essay_type),
-                #     ScanIndexForward=False,  # Get newest first
-                #     Limit=1
-                # )
-                #
-                # if not response['Items']:
                 raise ValueError(f"No rubric found for essay type: {essay_type} (even with fallback)")
 
         else:

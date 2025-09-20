@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './GradingPage.css';
-import Header from '../components/Header';
+import Header from '../components/Header/Header';
 
 function GradingPage({ essayData, onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);

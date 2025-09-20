@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import './UploadPage.css';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
 
 function UploadPage({ onStartGrading }) {
   const [dragActive, setDragActive] = useState(false);

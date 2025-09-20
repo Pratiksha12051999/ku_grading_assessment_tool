@@ -1,7 +1,7 @@
 import React from 'react';
 import './Header.css';
-import kiteLogo from '../assets/kite-logo.png';
-import kuLogo from '../assets/ku-logo.png';
+import kiteLogo from '../../assets/kite-logo.png';
+import kuLogo from '../../assets/ku-logo.png';
 
 function Header({ showBackButton = false, onBackClick }) {
     return (

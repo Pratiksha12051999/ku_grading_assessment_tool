@@ -59,75 +59,10 @@ This application is built using AWS CDK for infrastructure as code, AWS Lambda f
 
 ![Architecture Diagram](./docs/Architecture.png)
 
-## Common Prerequisites for Deployment
-
-### GitHub Setup
-1. Fork this repository to your GitHub account:
-   - Navigate to https://github.com/ASUCICREPO/ku_grading_tool
-   - Click the "Fork" button in the top right corner
-   - Select your GitHub account
-   - Wait for forking to complete
-   - Your fork will be at: https://github.com/YOUR-USERNAME/ku_grading_tool
-
-
-2. Create GitHub Personal Access Token:
-   - Go to GitHub Settings > Developer Settings > Personal Access Tokens > Tokens (classic)
-   - Click "Generate new token (classic)"
-   - Select "repo" and "admin:repo_hook" scopes
-   - Save the token securely
-   - [Detailed instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
-
-### AWS Bedrock Setup
-Enable the following AWS Bedrock models:
-- NOVA PRO
-
-To enable models:
-1. Open AWS Bedrock console
-2. Navigate to "Model access"
-3. Click "Manage model access"
-4. Select required models
-5. Save changes and wait for access approval
-6. Verify "Status" shows "Access granted"
-
-Note: Ensure your AWS account/region supports Bedrock model access
-
-### AWS Account Setup
-1. Required AWS Permissions:
-   - S3 bucket creation and management
-   - Lambda function deployment
-   - API Gateway creation
-   - DynamoDB table management
-   - Cognito user pool setup
-   - CloudFront distribution
-   - CloudWatch logging
-   - IAM role and policy management
-
-
-2. AWS CLI Setup:
-   ```bash
-   # Download the AWS CLI installation package
-   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-   
-   # Extract the installation files
-   unzip awscliv2.zip 
-   
-   # Run the installer
-   sudo ./aws/install
-   
-   #Verify installation
-   aws --version
-
-3. Install Postman for testing APIs:
-   - Visit https://www.postman.com/downloads/
-   - Download the macOS installer
-   - Drag the Postman app to your Applications folder
-   - Launch Postman
-   - Create a new request
-   - Send a POST request to any public API (e.g., https://api.github.com)
-   - Ensure you receive a successful response 
-
-
 ## Deployment
+
+### Common Prerequisites
+[Common Prerequisites can be found here](/docs/common_prerequisites.md).
 
 ### Using Cloudshell and AWS CodeBuild (Easiest)
 
@@ -186,7 +121,6 @@ Note: Ensure your AWS account/region supports Bedrock model access
   
 ### Manual Deployment
 
-
 1. Clone your forked repository:
    ```bash
    git clone https://github.com/YOUR-USERNAME/ku_grading_tool
@@ -226,39 +160,7 @@ Note: Ensure your AWS account/region supports Bedrock model access
 
 ## Usage Guide
 
-1. Download Required Sample Files and upload them in kudocuments S3 bucket. We are generating rubric for Essay Set 8 (Narrative Essay).
-   2. Upload the following files to the S3 bucket created by CDK stack. You can find the bucket name in the CloudFormation outputs in AWS Console.
-
-      You can use the following links to download the files:
-      1. original_rubric_guidelines_s3_file : https://drive.google.com/file/d/1E3-tJzc26ZZdYGb6J0ie4qDWUDDivY3U/view?usp=drive_link
-         
-         Note : This document must have rubric generation guidelines for the essay_type you are generating the rubric for. Check sample file for reference.
-   
-      2. sample_essays_csv_s3_file : https://drive.google.com/file/d/1hyPNc6EKhJfiQ6jV11hwq6a2nsik3jBT/view?usp=drive_link
-      
-         Note : This file contains sample essay responses and essay scores for the essay type you are trying to grade. A bigger sample of examples would mean better context for the LLM to generate the rubric based on these sample essays. Check sample file for reference.
-
-2.Use this JSON body to call the Generate Rubric endpoint: Replace the S3 URLs with the ones you uploaded in step 1.
-   ```json
-   {
-     "input_type": "direct",
-     "content_id": "1",
-     "essay_type": "Narrative",
-     "grade_level": "10",
-     "source_text_title": "",
-     "author": "",
-     "essay_prompt": "We all understand the benefits of laughter. For example, someone once said, “Laughter is the shortest distance between two people.” Many other people believe that laughter is an important part of any relationship. Tell a true story in which laughter was one element or part.",
-     "score_range": "1-6",
-     "source_text_content": "",
-     "original_rubric_guidelines_s3_url": "s3://kuessaygradingstack-dev-kudocumentsbucketfaec8400-nsot9pq5xre3/EssaySet8_ReadMeFirst.pdf",
-     "sample_essays_csv_s3_url": "s3://kuessaygradingstack-dev-kudocumentsbucketfaec8400-nsot9pq5xre3/dataset_8.csv"
-   }
-   ```
-3. Hit the Generate Rubric Endpoint from postman and ensure you get a 200 response.
-
-4. Now Upload this sample json file to the frontend application to grade essays. 
-
-   Sample JSON file : https://drive.google.com/file/d/1sLRZEm_6zgWSqbZh108xse4de9E8p0VR/view?usp=drive_link
+[Usage Guide can be found here](/docs/usage_guide.md).
 
 ## API Documentation
 
@@ -266,7 +168,7 @@ Here you can learn about the API the project uses: [API Documentation](/docs/api
 
 ## Modification Guide
 
-
+[Modification Guide can be found here](/docs/modification_guide.md).
 
 ## Credits
 This application was architected and developed by [Pratiksha Wadibhasme](https://www.linkedin.com/in/pratikshawadibhasme/), [Syna Malhan](https://www.linkedin.com/in/synamalhan/), and [Ashik Mathew Tharakan](https://www.linkedin.com/in/ashik-tharakan/), with solutions architect [Arun Arunachalam](https://www.linkedin.com/in/arunarunachalam/), program manager [Thomas Orr](https://www.linkedin.com/in/thomas-orr/) and product manager [Rachel Hayden](https://www.linkedin.com/in/rachelhayden/). Thanks to the ASU Cloud Innovation Centre Technical and Project Management teams for their guidance and support.
