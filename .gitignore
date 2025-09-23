@@ -45,3 +45,5 @@ yarn-error.log*
 *.pem
 aws.credentials
 cdk.context.json
+
+frontend/build.zip
