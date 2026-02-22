@@ -5,6 +5,11 @@ The KU Grading tool is an automated essay scoring solution designed to enhance t
 
 This application is built using AWS CDK for infrastructure as code, AWS Lambda for serverless compute, API Gateway for RESTful endpoints, and a React frontend for user interaction. The backend integrates with an AWS bedrock via API to perform essay grading based on predefined rubrics. It reduces  grading time and resource usage by automating the evaluation process while ensuring alignment with educational standards.
 
+
+## Demo Video
+
+<video src="https://github.com/user-attachments/assets/43b9ce96-9d9a-42ee-a220-fe1c1e79dd9e" controls width="100%"></video>
+
 ## 📖 Table of Contents
 
 | Section                                       | Description                                                        |
